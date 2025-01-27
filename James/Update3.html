@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe6e6;
+            color: #ff4d4d;
+            overflow: hidden;
+        }
+
+        /* Fullscreen container with fading background images */
+        #background-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: url('./images/image1.jpg');
+            background-size: cover;
+            background-position: center;
+            animation: fadeImages 20s infinite;
+            z-index: 1;
+        }
+
+        /* Keyframe animation for background image transitions */
+        @keyframes fadeImages {
+            0%, 25% {
+                background-image: url('./images/image1.jpg');
+            }
+            26%, 50% {
+                background-image: url('./images/image2.jpg');
+            }
+            51%, 75% {
+                background-image: url('./images/image3.jpg');
+            }
+            76%, 100% {
+                background-image: url('./images/image4.jpg');
+            }
+        }
+
+        /* Content container */
+        #content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent overlay */
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        #open-letter {
+            margin-top: 20px;
+        }
+
+        #open-letter img {
+            max-width: 300px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #open-letter img:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff8080;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff3333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background with images -->
+    <div id="background-screen"></div>
+
+    <!-- Content on top of the background -->
+    <div id="content">
+        <h1>Welcome to Valentine's Day</h1>
+        <p>Countdown to a magical celebration!</p>
+        <div id="open-letter">
+            <img src="./images/letter-background.jpg" alt="Valentine's Letter">
+            <p>Click to open your Valentine's letter 💌</p>
+        </div>
+        <button onclick="startExperience()">Start Experience</button>
+    </div>
+
+    <div id="countdown-screen" style="display:none;">
+        <div id="countdown"></div>
+    </div>
+
+    <script>
+        const countdown = document.getElementById('countdown');
+        const backgroundScreen = document.getElementById('background-screen');
+        const countdownScreen = document.getElementById('countdown-screen');
+        const content = document.getElementById('content');
+        const openLetter = document.querySelector('#open-letter img'); // Select the envelope image
+
+        // Countdown to Valentine's Day
+        function updateCountdown() {
+            const now = new Date();
+            const valentinesDay = new Date(now.getFullYear(), 1, 14); // February 14
+            if (now > valentinesDay) valentinesDay.setFullYear(now.getFullYear() + 1);
+            const diff = valentinesDay - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            countdown.textContent = `Countdown to Valentine's Day: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+        setInterval(updateCountdown, 1000);
+
+        // Transition to the next screen
+        function startExperience() {
+            backgroundScreen.style.display = 'none';
+            content.style.display = 'none';
+            countdownScreen.style.display = 'flex';
+            countdownScreen.style.flexDirection = 'column';
+            countdownScreen.style.alignItems = 'center';
+            countdownScreen.style.justifyContent = 'center';
+            countdownScreen.style.height = '100vh';
+        }
+
+        // Add click event to the envelope image
+        openLetter.addEventListener('click', startExperience);
+    </script>
+</body>
+</html>

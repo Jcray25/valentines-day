@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe6e6;
+            background-image: url('./images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #ff4d4d;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .visible {
+            display: flex;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff8080;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff3333;
+        }
+
+        #summary-message {
+            margin: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        img {
+            max-width: 300px;
+            border-radius: 10px;
+        }
+
+        #open-letter img {
+            max-width: 600px;
+            height: auto;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        #countdown {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #fff;
+            color: #ff4d4d;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #food-screen, #activity-screen {
+            overflow-y: auto;
+            max-height: 50vh; /* Adjust the height to allow scrolling */
+        }
+
+        button img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown"></div>
+
+    <div class="screen visible" id="letter-screen">
+        <div class="letter" id="open-letter">
+            <img src="./images/letter-background.jpg" alt="Valentine's Letter">
+            <div>Click to open your Valentine's letter 💌</div>
+        </div>
+    </div>
+
+    <div class="screen" id="message-screen">
+        <div id="valentine-message">
+            Hi Bianca, <br><br>
+            You are such an amazing woman; caring, loving, and passionate. <br>
+            You are my everything, my sunshine, and my heart’s delight. <br>
+            Every moment with you is a treasure. <br>
+            Will you make this Valentine’s Day extra special by being my Valentine? ❤️
+        </div>
+        <button id="yes-btn">Yes 💖</button>
+        <button id="no-btn">No 💔</button>
+    </div>
+
+    <div class="screen" id="food-screen">
+        <div>Choose a food option:</div>
+        <button data-info="Delight in Japanese cuisine" id="japanese-btn">
+            <img src="./images/japanese-cuisine.jpg" alt="Japanese Cuisine">
+            Japanese Cuisine
+        </button>
+        <button data-info="Savor Brazilian cuisine" id="brazilian-btn">
+            <img src="./images/brazilian-cuisine.jpg" alt="Brazilian Cuisine">
+            Brazilian Cuisine
+        </button>
+        <button data-info="Enjoy the tropical flavors of Cuban cuisine" id="cuban-btn">
+            <img src="./images/cuban-cuisine.jpg" alt="Cuban Cuisine">
+            Cuban Cuisine
+        </button>
+        <button data-info="Indulge in the sweet, spicy, and savory world of Korean cuisine" id="korean-btn">
+            <img src="./images/korean-cuisine.jpg" alt="Korean Cuisine">
+            Korean Cuisine
+        </button>
+    </div>
+
+    <div class="screen" id="activity-screen">
+        <div>Choose an activity:</div>
+        <button data-info="Enjoy breathtaking views of the city at Skyscape" id="skyscape-btn">
+            <img src="./images/skyscape.jpg" alt="Skyscape">
+            Skyscape
+        </button>
+        <button data-info="Have fun playing a round of mini-golf together" id="golf-btn">
+            <img src="./images/mini-golf.jpg" alt="Mini Golf">
+            Mini Golf
+        </button>
+        <button data-info="Relax and rejuvenate with a couples' facial experience" id="facials-btn">
+            <img src="./images/facials.jpg" alt="Facials">
+            Facials
+        </button>
+        <button data-info="Laugh the night away at a live comedy show" id="comedy-btn">
+            <img src="./images/comedy-show.jpg" alt="Comedy Show">
+            Comedy Show
+        </button>
+    </div>
+
+    <div class="screen" id="final-screen">
+        <div id="summary-message"></div>
+        <img src="./images/final-valentine.jpg" alt="Valentine's Image">
+        <button id="restart-btn">Restart</button>
+    </div>
+
+    <div class="screen" id="rejection-screen">
+        <div>Oh no! That hurts 💔</div>
+        <p>Just kidding, it's okay! Would you like to reconsider? 😅</p>
+        <button id="reconsider-btn">Let me think again</button>
+    </div>
+
+    <script>
+        const screens = document.querySelectorAll('.screen');
+        const openLetter = document.getElementById('open-letter');
+        const messageScreen = document.getElementById('message-screen');
+        const foodScreen = document.getElementById('food-screen');
+        const activityScreen = document.getElementById('activity-screen');
+        const finalScreen = document.getElementById('final-screen');
+        const rejectionScreen = document.getElementById('rejection-screen');
+        const summaryMessage = document.getElementById('summary-message');
+        const countdown = document.getElementById('countdown');
+        const restartBtn = document.getElementById('restart-btn');
+
+        let chosenFood = '';
+        let chosenActivity = '';
+
+        // Countdown to Valentine's Day
+        function updateCountdown() {
+            const now = new Date();
+            const valentinesDay = new Date(now.getFullYear(), 1, 14); // February 14
+            if (now > valentinesDay) valentinesDay.setFullYear(now.getFullYear() + 1);
+            const diff = valentinesDay - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            countdown.textContent = `Countdown to Valentine's Day: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+        setInterval(updateCountdown, 1000);
+
+        // Show specific screen
+        function showScreen(screenToShow) {
+            screens.forEach(screen => screen.classList.remove('visible'));
+            screenToShow.classList.add('visible');
+        }
+
+        // Open Letter
+        openLetter.addEventListener('click', () => showScreen(messageScreen));
+
+        // Handle "Yes" response
+        document.getElementById('yes-btn').addEventListener('click', () => {
+            showScreen(foodScreen);
+        });
+
+        // Handle "No" response
+        document.getElementById('no-btn').addEventListener('click', () => {
+            showScreen(rejectionScreen);
+        });
+
+        // Handle "Reconsider" button
+        document.getElementById('reconsider-btn').addEventListener('click', () => {
+            showScreen(messageScreen);
+        });
+
+        // Food selection logic
+        document.querySelectorAll('#food-screen button').forEach(button => {
+            button.addEventListener('click', () => {
+                chosenFood = button.textContent;
+                showScreen(activityScreen);
+            });
+        });
+
+        // Activity selection logic
+        document.querySelectorAll('#activity-screen button').forEach(button => {
+            button.addEventListener('click', () => {
+                chosenActivity = button.textContent;
+                showScreen(finalScreen);
+                summaryMessage.innerHTML = `
+                    YAYYY, <br>
+                    We're going to enjoy <strong>${chosenFood}</strong>, followed by <strong>${chosenActivity}</strong>. <br>
+                    I can't wait to spend this special day with you. I LOVE YOU!! ❤️
+                `;
+            });
+        });
+
+        // Restart the experience
+        restartBtn.addEventListener('click', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>

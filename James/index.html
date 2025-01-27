@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Experience</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe6e6;
+            color: #ff4d4d;
+            overflow: hidden;
+        }
+
+        /* Background for the first screen */
+        #background-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            animation: fadeImages 20s infinite;
+            z-index: 1;
+        }
+
+        @keyframes fadeImages {
+            0%, 25% {
+                background-image: url('./images/image1.jpg');
+            }
+            26%, 50% {
+                background-image: url('./images/image2.jpg');
+            }
+            51%, 75% {
+                background-image: url('./images/image3.jpg');
+            }
+            76%, 100% {
+                background-image: url('./images/image4.jpg');
+            }
+        }
+
+        /* Main content styles */
+        .screen {
+            position: relative;
+            z-index: 2;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .visible {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        #open-letter img {
+            max-width: 150px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #open-letter img:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff8080;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff3333;
+        }
+
+        /* Countdown styles */
+        #countdown {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #fff;
+            color: #ff4d4d;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Scrollable food and activity options */
+        .scrollable {
+            overflow-y: auto;
+            max-height: 70vh;
+            width: 90%;
+        }
+
+        button img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+
+        /* Background styles for specific screens */
+        #food-screen {
+            background-image: url('./images/food-background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        #activity-screen {
+            background-image: url('./images/activity-background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        /* Decorations for the message screen */
+        .decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Prevent interfering with clicks */
+            z-index: 1;
+        }
+
+        .decor {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            animation: float 10s infinite;
+            opacity: 0.8;
+        }
+
+        .decor.rose {
+            width: 60px;
+            height: 60px;
+        }
+
+        .decor.heart {
+            width: 40px;
+            height: 40px;
+        }
+
+        .decor:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+        .decor:nth-child(2) { top: 30%; left: 40%; animation-delay: 2s; }
+        .decor:nth-child(3) { top: 50%; left: 10%; animation-delay: 4s; }
+        .decor:nth-child(4) { top: 70%; left: 70%; animation-delay: 6s; }
+        .decor:nth-child(5) { top: 90%; left: 50%; animation-delay: 8s; }
+        .decor:nth-child(6) { top: 80%; left: 30%; animation-delay: 10s; }
+        .decor:nth-child(7) { top: 20%; left: 60%; animation-delay: 1s; }
+        .decor:nth-child(8) { top: 40%; left: 80%; animation-delay: 3s; }
+        .decor:nth-child(9) { top: 60%; left: 15%; animation-delay: 5s; }
+        .decor:nth-child(10) { top: 75%; left: 45%; animation-delay: 7s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(20deg);
+            }
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background for the first screen -->
+    <div id="background-screen"></div>
+
+    <!-- Screens -->
+    <div class="screen visible" id="letter-screen">
+        <h1>Welcome to Valentine's Day</h1>
+        <p>Countdown to a magical celebration!</p>
+        <div id="countdown"></div>
+        <div id="open-letter">
+            <img src="./images/letter-background.jpg" alt="Valentine's Letter" onclick="openValentineLetter()">
+            <p>Click to open your Valentine's letter 💌</p>
+        </div>
+        <button onclick="startMessageScreen()">Open Letter</button>
+    </div>
+
+    <div class="screen" id="message-screen">
+        <!-- Roses and Hearts Decorations -->
+        <div class="decorations">
+            <img src="./images/rose.png" class="decor rose" alt="Rose">
+            <img src="./images/heart.png" class="decor heart" alt="Heart">
+            <img src="./images/rose.png" class="decor rose" alt="Rose">
+            <img src="./images/heart.png" class="decor heart" alt="Heart">
+            <img src="./images/rose.png" class="decor rose" alt="Rose">
+            <img src="./images/heart.png" class="decor heart" alt="Heart">
+            <img src="./images/rose.png" class="decor rose" alt="Rose">
+            <img src="./images/heart.png" class="decor heart" alt="Heart">
+        </div>
+
+        <div id="valentine-message">
+            Hi Bianca, <br><br>
+            You are such an amazing woman; caring, loving, and passionate. <br>
+            You are my everything, my sunshine, and my heart’s delight. <br>
+            Every moment with you is a treasure. <br>
+            Will you make this Valentine’s Day extra special by being my Valentine? ❤️
+        </div>
+        <button id="yes-btn" onclick="startFoodScreen()">Yes 💖</button>
+        <button id="no-btn" onclick="showRejectionScreen()">No 💔</button>
+    </div>
+
+    <div class="screen" id="rejection-screen">
+        <div>Oh no! That hurts 💔</div>
+        <p>Just kidding, it's okay! Would you like to reconsider? 😅</p>
+        <button onclick="startMessageScreen()">Let me think again</button>
+    </div>
+
+    <div class="screen" id="food-screen">
+        <h2>Choose a food option:</h2>
+        <div class="scrollable">
+            <button data-info="Delight in Japanese cuisine" onclick="chooseFood('Japanese Cuisine')">
+                <img src="./images/japanese-cuisine.jpg" alt="Japanese Cuisine">
+                Japanese Cuisine
+            </button>
+            <button data-info="Savor Brazilian cuisine" onclick="chooseFood('Brazilian Cuisine')">
+                <img src="./images/brazilian-cuisine.jpg" alt="Brazilian Cuisine">
+                Brazilian Cuisine
+            </button>
+            <button data-info="Indulge in Cuban flavors" onclick="chooseFood('Cuban Cuisine')">
+                <img src="./images/cuban-cuisine.jpg" alt="Cuban Cuisine">
+                Cuban Cuisine
+            </button>
+            <button data-info="Enjoy sweet, spicy, and savory Korean cuisine" onclick="chooseFood('Korean Cuisine')">
+                <img src="./images/korean-cuisine.jpg" alt="Korean Cuisine">
+                Korean Cuisine
+            </button>
+            <button data-info="Relish Mediterranean flavors" onclick="chooseFood('Mediterranean Cuisine')">
+                <img src="./images/mediterranean-cuisine.jpg" alt="Mediterranean Cuisine">
+                Mediterranean Cuisine
+            </button>
+        </div>
+    </div>
+
+    <div class="screen" id="activity-screen">
+        <h2>Choose an activity:</h2>
+        <div class="scrollable">
+            <button data-info="Enjoy breathtaking views" onclick="chooseActivity('Skyscape')">
+                <img src="./images/skyscape.jpg" alt="Skyscape">
+                Skyscape
+            </button>
+            <button data-info="Play a fun round of mini-golf" onclick="chooseActivity('Mini Golf')">
+                <img src="./images/mini-golf.jpg" alt="Mini Golf">
+                Mini Golf
+            </button>
+            <button data-info="Relax with a facial" onclick="chooseActivity('Facials')">
+                <img src="./images/facials.jpg" alt="Facials">
+                Facials
+            </button>
+            <button data-info="Laugh at a live comedy show" onclick="chooseActivity('Comedy Show')">
+                <img src="./images/comedy-show.jpg" alt="Comedy Show">
+                Comedy Show
+            </button>
+        </div>
+    </div>
+
+    <div class="screen" id="final-screen">
+        <h2>Summary:</h2>
+        <p id="summary-message"></p>
+        <img src="./images/final-valentine.jpg" alt="Valentine's Image">
+        <button onclick="restart()">Restart</button>
+    </div>
+
+    <script>
+        const screens = document.querySelectorAll('.screen');
+        const backgroundScreen = document.getElementById('background-screen');
+        const countdown = document.getElementById('countdown');
+        let chosenFood = '';
+        let chosenActivity = '';
+
+        function showScreen(screenId) {
+            screens.forEach(screen => screen.classList.remove('visible'));
+            document.getElementById(screenId).classList.add('visible');
+            if (screenId !== 'letter-screen') {
+                backgroundScreen.style.display = 'none'; // Hide background slideshow after the first screen
+            }
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const valentinesDay = new Date(now.getFullYear(), 1, 14); // February 14
+            if (now > valentinesDay) valentinesDay.setFullYear(now.getFullYear() + 1);
+            const diff = valentinesDay - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            countdown.textContent = `Countdown to Valentine's Day: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+        setInterval(updateCountdown, 1000);
+
+        function openValentineLetter() {
+            alert("Happy Valentine's Day! 💖 Here's your special message: You are loved!");
+        }
+
+        function startMessageScreen() {
+            showScreen('message-screen');
+        }
+
+        function startFoodScreen() {
+            showScreen('food-screen');
+        }
+
+        function showRejectionScreen() {
+            showScreen('rejection-screen');
+        }
+
+        function chooseFood(food) {
+            chosenFood = food;
+            showScreen('activity-screen');
+        }
+
+        function chooseActivity(activity) {
+            chosenActivity = activity;
+            showScreen('final-screen');
+            document.getElementById('summary-message').innerHTML = `
+                We're going to enjoy <strong>${chosenFood}</strong>, followed by <strong>${chosenActivity}</strong>. 
+                I can't wait to spend this special day with you. I LOVE YOU!! ❤️
+            `;
+        }
+
+        function restart() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
