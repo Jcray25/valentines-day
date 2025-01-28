@@ -44,7 +44,7 @@
         /* Main content styles */
         .screen {
             position: relative;
-            z-index: 2;
+            z-index: 3; /* Place above floating decorations */
             display: none;
             flex-direction: column;
             align-items: center;
@@ -120,7 +120,7 @@
 
         /* Background styles for specific screens */
         #food-screen {
-            background-image: url('./images/food-background.jpg');
+            background-image: url('./images/food-background-highres.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -135,6 +135,11 @@
             background-attachment: fixed;
         }
 
+        #message-screen {
+            background-image: none !important;
+            background-color: transparent;
+        }
+
         /* Decorations for the message screen */
         .decorations {
             position: absolute;
@@ -143,7 +148,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none; /* Prevent interfering with clicks */
-            z-index: 1;
+            z-index: 2; /* Place behind text */
         }
 
         .decor {
@@ -164,17 +169,6 @@
             height: 40px;
         }
 
-        .decor:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
-        .decor:nth-child(2) { top: 30%; left: 40%; animation-delay: 2s; }
-        .decor:nth-child(3) { top: 50%; left: 10%; animation-delay: 4s; }
-        .decor:nth-child(4) { top: 70%; left: 70%; animation-delay: 6s; }
-        .decor:nth-child(5) { top: 90%; left: 50%; animation-delay: 8s; }
-        .decor:nth-child(6) { top: 80%; left: 30%; animation-delay: 10s; }
-        .decor:nth-child(7) { top: 20%; left: 60%; animation-delay: 1s; }
-        .decor:nth-child(8) { top: 40%; left: 80%; animation-delay: 3s; }
-        .decor:nth-child(9) { top: 60%; left: 15%; animation-delay: 5s; }
-        .decor:nth-child(10) { top: 75%; left: 45%; animation-delay: 7s; }
-
         @keyframes float {
             0% {
                 transform: translateY(0) rotate(0deg);
@@ -186,11 +180,28 @@
                 transform: translateY(0) rotate(0deg);
             }
         }
+
+        /* Fullscreen Image on Final Screen */
+        #final-screen img.fullscreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
     <!-- Background for the first screen -->
     <div id="background-screen"></div>
+
+    <!-- Music Element -->
+    <audio id="background-music" src="./audio/background-music.mp3" loop autoplay></audio>
+
+    <!-- Music Toggle Button -->
+    <button id="music-toggle" onclick="toggleMusic()" style="position: fixed; top: 10px; right: 10px; z-index: 100;">Pause Music</button>
 
     <!-- Screens -->
     <div class="screen visible" id="letter-screen">
@@ -199,7 +210,7 @@
         <div id="countdown"></div>
         <div id="open-letter">
             <img src="./images/letter-background.jpg" alt="Valentine's Letter" onclick="openValentineLetter()">
-            <p>Click to open your Valentine's letter 💌</p>
+            <p>Click on the envelope above 💌</p>
         </div>
         <button onclick="startMessageScreen()">Open Letter</button>
     </div>
@@ -207,31 +218,36 @@
     <div class="screen" id="message-screen">
         <!-- Roses and Hearts Decorations -->
         <div class="decorations">
-            <img src="./images/rose.png" class="decor rose" alt="Rose">
-            <img src="./images/heart.png" class="decor heart" alt="Heart">
-            <img src="./images/rose.png" class="decor rose" alt="Rose">
-            <img src="./images/heart.png" class="decor heart" alt="Heart">
-            <img src="./images/rose.png" class="decor rose" alt="Rose">
-            <img src="./images/heart.png" class="decor heart" alt="Heart">
-            <img src="./images/rose.png" class="decor rose" alt="Rose">
-            <img src="./images/heart.png" class="decor heart" alt="Heart">
+            <script>
+                const decorationsContainer = document.querySelector('.decorations');
+                for (let i = 0; i < 40; i++) {
+                    const decor = document.createElement('img');
+                    decor.classList.add('decor');
+                    decor.classList.add(i % 2 === 0 ? 'rose' : 'heart');
+                    decor.src = i % 2 === 0 ? './images/rose.jpg' : './images/heart.jpg';
+                    decor.style.top = `${Math.random() * 100}%`;
+                    decor.style.left = `${Math.random() * 100}%`;
+                    decor.style.animationDelay = `${Math.random() * 10}s`;
+                    decorationsContainer.appendChild(decor);
+                }
+            </script>
         </div>
 
         <div id="valentine-message">
-            Hi Bianca, <br><br>
+            Hi Amor, <br><br>
             You are such an amazing woman; caring, loving, and passionate. <br>
-            You are my everything, my sunshine, and my heart’s delight. <br>
-            Every moment with you is a treasure. <br>
-            Will you make this Valentine’s Day extra special by being my Valentine? ❤️
+            You are my everything, my sunshine, and my heart’s ultimate fate. <br>
+            Every moment with you is a treasure so fine. <br>
+            Will you make this Valentine’s Day special by being mine? ❤️
         </div>
         <button id="yes-btn" onclick="startFoodScreen()">Yes 💖</button>
         <button id="no-btn" onclick="showRejectionScreen()">No 💔</button>
     </div>
 
     <div class="screen" id="rejection-screen">
-        <div>Oh no! That hurts 💔</div>
+        <div>WOWWW! That hurts 💔</div>
         <p>Just kidding, it's okay! Would you like to reconsider? 😅</p>
-        <button onclick="startMessageScreen()">Let me think again</button>
+        <button onclick="startMessageScreen()">Let's try again</button>
     </div>
 
     <div class="screen" id="food-screen">
@@ -279,13 +295,17 @@
                 <img src="./images/comedy-show.jpg" alt="Comedy Show">
                 Comedy Show
             </button>
+            <button data-info="Create something beautiful in a pottery session" onclick="chooseActivity('Pottery')">
+                <img src="./images/pottery.jpg" alt="Pottery">
+                Pottery
+            </button>
         </div>
     </div>
 
     <div class="screen" id="final-screen">
         <h2>Summary:</h2>
         <p id="summary-message"></p>
-        <img src="./images/final-valentine.jpg" alt="Valentine's Image">
+        <img src="./images/final-fullscreen-highres.jpg" class="fullscreen" alt="Valentine's Fullscreen Image">
         <button onclick="restart()">Restart</button>
     </div>
 
@@ -293,14 +313,21 @@
         const screens = document.querySelectorAll('.screen');
         const backgroundScreen = document.getElementById('background-screen');
         const countdown = document.getElementById('countdown');
+        const music = document.getElementById('background-music');
+        const musicToggle = document.getElementById('music-toggle');
+
         let chosenFood = '';
         let chosenActivity = '';
 
         function showScreen(screenId) {
             screens.forEach(screen => screen.classList.remove('visible'));
             document.getElementById(screenId).classList.add('visible');
+
+            // Pause animation when leaving the first screen
             if (screenId !== 'letter-screen') {
-                backgroundScreen.style.display = 'none'; // Hide background slideshow after the first screen
+                backgroundScreen.style.animationPlayState = 'paused';
+            } else {
+                backgroundScreen.style.animationPlayState = 'running'; // Resume if going back
             }
         }
 
@@ -318,7 +345,17 @@
         setInterval(updateCountdown, 1000);
 
         function openValentineLetter() {
-            alert("Happy Valentine's Day! 💖 Here's your special message: You are loved!");
+            alert("Happy Valentine's Day! 💖 This message is for you: Click OK, then tap the music button in the top right, and finally click 'Open Letter' ");
+        }
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                musicToggle.textContent = 'Pause Music';
+            } else {
+                music.pause();
+                musicToggle.textContent = 'Play Music';
+            }
         }
 
         function startMessageScreen() {
@@ -343,7 +380,7 @@
             showScreen('final-screen');
             document.getElementById('summary-message').innerHTML = `
                 We're going to enjoy <strong>${chosenFood}</strong>, followed by <strong>${chosenActivity}</strong>. 
-                I can't wait to spend this special day with you. I LOVE YOU!! ❤️
+                I can't wait to spend this day with you and cherish our love. TE AMO ❤️
             `;
         }
 
